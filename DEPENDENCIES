@@ -1,5 +1,6 @@
 python>=3
 correctpony
+gnupg
 
 ::make dependencies::
 python>=3
