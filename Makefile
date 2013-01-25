@@ -21,18 +21,32 @@ UNICODE_VERSION=6.2.0
 unicode:
 	mkdir -p res
 	if [ -f PropList.txt ]; then rm PropList.txt; fi
+
 	wget 'http://www.unicode.org/Public/$(UNICODE_VERSION)/ucd/PropList.txt'
-	grep -v '^$$' < PropList.txt | grep -v '^#' | sed -e 's_#_;_g' | cut -d ';' -f 1,3 > glyphs~
-	i=0; while (( $$i < 10 )); do sed -i 's_  _ _g' glyphs~; (( i++ )); done
-	sed -e 's_ ; _ _g' < glyphs~ | cut -d ' ' -f 1,2 > glyphs
-	grep -v ' Mn$$' < glyphs | grep -v ' Z.$$' | grep -v ' C.$$' > glyphs~
+	grep -v '^$$' < PropList.txt | grep -v '^#' | sed -e 's_;_ ;_g' -e 's_#_;_g' | cut -d ';' -f 1,3 > glyphs
+	i=0; while (( $$i < 10 )); do sed -i 's_  _ _g' glyphs; (( i++ )); done
+	sed -e 's_ ; _ _g' < glyphs | cut -d ' ' -f 1,2 > glyphs~
+
 	grep -v '^...... ..$$' < glyphs~ | grep -v '^......\.\....... ..$$' > glyphs
 	grep -v '^..... ..$$' < glyphs | grep -v '^.....\.\...... ..$$' > glyphs~
-	grep -v '^.....\.\....... ..$$' < glyphs~ | cut -d ' ' -f 1 > glyphs
-	mv glyphs res
-	rm PropList.txt glyphs~
+	grep -v '^.....\.\....... ..$$' < glyphs~ > glyphs
+
+	cp glyphs blacklist
+
+	grep -v ' Mn$$' < glyphs | grep -v ' Z.$$' | grep -v ' C.$$' > glyphs~
+	cut -d ' ' -f 1 < glyphs~ | sort | uniq > glyphs
+
+	egrep ' (Mn|Z.|C.)$$' < blacklist | cut -d ' ' -f 1 | sort | uniq > res/glyphs-blacklist
+
+	mv glyphs res/glyphs~
+	rm PropList.txt glyphs~ blacklist
+
+	(cat res/glyphs~; echo; cat res/glyphs-blacklist) | tools/hexexpand.py  | \
+	    sets '1 \ 2' | sort | tools/hexcollapse.py > res/glyphs
+	rm res/glyphs~ res/glyphs-blacklist
+
 
 .PHONY: clean
 clean:
-	rm PropList.txt glyphs~ glyphs res/glyphs || exit 0
+	rm PropList.txt glyphs~ glyphs blacklist res/glyphs{,~} res/glyphs-blacklist || exit 0
 
