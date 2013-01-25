@@ -1,0 +1,11 @@
+python>=3
+correctpony
+
+::make dependencies::
+python>=3
+make
+sed
+coreutils
+wget
+sets
+
