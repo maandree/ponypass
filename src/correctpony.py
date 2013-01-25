@@ -20,7 +20,12 @@
 
 import random
 import sys
+import os
 from subprocess import Popen, PIPE
+
+
+
+CORRECTPONY_LIST = '/usr/share/correctpony'
 
 
 
@@ -45,6 +50,11 @@ def gensimple(length = 20, words = 5, lists = []):
     return Popen(['correctpony'] + params, stdout=PIPE).communicate()[0].decode('utf-8', 'replace')[:-1]
 
 
+def listsimple():
+    return os.listdir(CORRECTPONY_LIST)
+
+
 if __name__ == '__main__':
+    print(listsimple())
     print('\033[30;40m' + gensimple() + '\033[00;01;33;41mEND\033[00m')
 
