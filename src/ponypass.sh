@@ -24,7 +24,7 @@ wallet="${HOME}/.ponypass/wallet"
 temp="${tempmount}/.$(uuidgen)-$(uuidgen)"
 
 if [ ! "$(df -l -P -t tmpfs | grep -- "${tempmount}" | wc -l)" = "1" ]; then
-    echo -e '\e[01;31m/dev/shm is not a tmpfs.\e[00m' 1>&2
+    echo -e '\e[01;31m'"${tempmount}"' is not a tmpfs.\e[00m' 1>&2
     exit 10
 fi
 
