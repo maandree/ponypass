@@ -20,9 +20,7 @@
 
 import random
 import sys
-
-
-GLYPHS = 'res/glyphs'
+from subprocess import Popen, PIPE
 
 
 
@@ -38,41 +36,15 @@ def print(text = '', end = '\n'):
 
 
 
-def genobsure(length = 60):
-    lines = None
-    with open(GLYPHS, 'r') as file:
-        lines = [line.replace('\r', '') for line in file.read()[:-1].split('\n')]
-    count = 0
-    counts = []
-    firsts = []
-    for line in lines:
-        if '..' in line:
-            a = int(line.split('..')[0], 16)
-            b = int(line.split('..')[1], 16)
-            if b > 0xFFFF:
-                continue
-            firsts.append(a)
-            counts.append(b - a + 1)
-            count += b - a + 1
-        else:
-            firsts.append(int(line, 16))
-            counts.append(1)
-            count += 1
-    passphrase = ''
-    for i in range(0, length):
-        index = int(random.random() * count)
-        cur = 0
-        pos = 0
-        while (cur <= index):
-            cur += counts[pos]
-            pos += 1
-        pos -= 1
-        cur -= counts[pos]
-        passphrase += chr(firsts[pos] + index)
-    return passphrase
-    
+def gensimple(length = 20, words = 5, lists = []):
+    options = [['-j', '-u'], ['-s', ' '], ['-s', '.']]
+    params = random.choice(options)
+    params += ['-p', '-c', str(length), '-w', str(words)]
+    for list in lists:
+        params += ['-l', list]
+    return Popen(['correctpony'] + params, stdout=PIPE).communicate()[0].decode('utf-8', 'replace')[:-1]
 
 
 if __name__ == '__main__':
-    print('\033[30;40m' + genobsure() + '\033[00;01;33;41mEND\033[00m')
+    print('\033[30;40m' + gensimple() + '\033[00;01;33;41mEND\033[00m')
 
