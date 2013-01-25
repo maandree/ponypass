@@ -21,7 +21,8 @@
 tempmount="/dev/shm"
 id=$(cat "${HOME}/.ponypass/id")
 wallet="${HOME}/.ponypass/wallet"
-temp="${tempmount}/.$(uuidgen)-$(uuidgen)"
+tmpid="$(uuidgen)-$(uuidgen)"
+temp="${tempmount}/.${tmpid}"
 
 if [ ! "$(df -l -P -t tmpfs | grep -- "${tempmount}" | wc -l)" = "1" ]; then
     echo -e '\e[01;31m'"${tempmount}"' is not a tmpfs.\e[00m' 1>&2
@@ -46,6 +47,12 @@ fi
 
 rc=1
 
+ln -s /dev/null "${tempmount}/.${tmpid}~"
+ln -s /dev/null "${tempmount}/.${tmpid}.bak"
+ln -s /dev/null "${tempmount}/.${tmpid}.swp"
+ln -s /dev/null "${tempmount}/#.${tmpid}#"
+ln -s /dev/null "${tempmount}/.#.${tmpid}"
+
 touch "$temp" &&
     chmod 600 "$temp" &&
     echo -e '\e[01;34mLoading wallet.\e[00m' 1>&2 &&
@@ -56,9 +63,13 @@ touch "$temp" &&
 
 rc=$?
 
-if [ -f "$temp" ]; then
-    _shred "$temp"
-fi
+find "${temp%/*}" | grep "$tmpid" | while read line; do
+    if [ -f "$line" ]; then
+	_shred "$line"
+    else
+	unlink "$line" # do not shred /dev/null
+    fi
+done
 
 if [ -f "${wallet}.new" ]; then
     rm -- "${wallet}.new"
