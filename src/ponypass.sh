@@ -36,7 +36,7 @@ fi
 
 function _shred
 {
-    # but please also use disc encryption, such as LUKS
+    # but please also use encryption, such as LUKS, on the swap
     shred --force --iterations=20 --zero --remove -- "$1"
 }
 
