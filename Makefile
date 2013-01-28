@@ -94,6 +94,6 @@ unicode:
 
 .PHONY: clean
 clean:
-	rm PropList.txt glyphs~ glyphs blacklist res/glyphs{,~} res/glyphs-blacklist || exit 0
+	rm PropList.txt glyphs~ glyphs blacklist res/glyphs{,~} res/glyphs-blacklist 2>/dev/null || exit 0
 	rm -r *.{t2d,aux,cp,cps,fn,ky,log,pg,pgs,toc,tp,vr,vrs,op,ops,bak,info,pdf,ps,dvi,gz} 2>/dev/null || exit 0
 
