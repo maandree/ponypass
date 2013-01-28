@@ -19,6 +19,51 @@
 UNICODE_VERSION=6.2.0
 
 
+PREFIX=/usr
+BIN=/bin
+DATA=/share
+
+PROGRAM=ponypass
+BOOK=$(PROGRAM)
+BOOKDIR=doc/
+
+
+all: info unicode
+
+
+info: $(BOOK).info.gz
+%.info: $(BOOKDIR)%.texinfo
+	$(MAKEINFO) "$<"
+%.info.gz: %.info
+	gzip -9c < "$<" > "$@"
+
+
+pdf: $(BOOK).pdf
+%.pdf: $(BOOKDIR)%.texinfo
+	texi2pdf "$<"
+
+pdf.gz: $(BOOK).pdf.gz
+%.pdf.gz: %.pdf
+	gzip -9c < "$<" > "$@"
+
+pdf.xz: $(BOOK).pdf.xz
+%.pdf.xz: %.pdf
+	xz -e9 < "$<" > "$@"
+
+
+dvi: $(BOOK).dvi
+%.dvi: $(BOOKDIR)%.texinfo
+	$(TEXI2DVI) "$<"
+
+dvi.gz: $(BOOK).dvi.gz
+%.dvi.gz: %.dvi
+	gzip -9c < "$<" > "$@"
+
+dvi.xz: $(BOOK).dvi.xz
+%.dvi.xz: %.dvi
+	xz -e9 < "$<" > "$@"
+
+
 unicode:
 	mkdir -p res
 	if [ -f PropList.txt ]; then rm PropList.txt; fi
