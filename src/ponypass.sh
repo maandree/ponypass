@@ -31,7 +31,7 @@ fi
 
 if [ ! -f "$wallet" ]; then
     echo -e '\e[01;34mCreating a wallet.\e[00m' 1>&2
-    echo wallet | gpg --sign --local-user "$id" --encrypt --recipient "$id" > "$wallet" ||
+    echo '()' | gpg --sign --local-user "$id" --encrypt --recipient "$id" > "$wallet" ||
         (rm -- "$wallet" ; exit 1)
 fi
 

@@ -187,12 +187,14 @@ class Ponymenu:
         def make(items):
             rc = []
             for item in items:
-                (name, address, uuid, inner) = (None, None, None, None)
+                (name, address, uuid, user, key, inner) = (None, None, None, None, None, None)
                 add = None
                 for tag in item:
                     if   tag[0] == 'name':  name    = ' '.join(tag[1:])
                     elif tag[0] == 'desc':  address = ' '.join(tag[1:])
-                    elif tag[0] == 'cmd':   uuid    = ' '.join(tag[1:])
+                    elif tag[0] == 'uuid':  uuid    = ' '.join(tag[1:])
+                    elif tag[0] == 'user':  user    = ' '.join(tag[1:])
+                    elif tag[0] == 'key':   key     = ' '.join(tag[1:])
                     elif tag[0] == 'inner': inner   =     make(tag[1:])
                 if add is None:
                     add = True
@@ -207,9 +209,9 @@ class Ponymenu:
         '''
         Execute command
         
-        @param  command:str  The command
+        @param  command:list<str>  The command
         '''
-        print(command)
+        print('\n'.join(command))
     
     
     def interact(self):
@@ -387,7 +389,7 @@ class Ponymenu:
                                 self.command = command
                             def __call__(self):
                                 Ponymenu.execute(self.command)
-                        return ExecFunctor(item.uuid)
+                        return ExecFunctor([item.uuid, item.user, item.key])
                 else:
                     if len(stack) == 0:
                         continue
