@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
-ponymenu – terminal based application menu
+ponypass – Secure superultraawesomemasing passphrase wallet
 
-Copyright © 2012, 2013  Mattias Andrée (maandree@member.fsf.org)
+Copyright © 2013  Mattias Andrée (maandree@member.fsf.org)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -79,10 +79,8 @@ def flush():
 class Ponymenu:
     '''
     Ponymenu mane class
-    
-    @param  args:list<str>  Arguments to pass to the executed command
     '''
-    def __init__(self, args):
+    def __init__(self):
         '''
         Constructor and mane
         '''
@@ -179,7 +177,7 @@ class Ponymenu:
                 print('ponymenu: no menu file found')
                 return
             
-            action = self.interact(args)
+            action = self.interact()
             
         finally:
             Popen(['stty', 'icanon', 'echo', 'isig', 'ixoff', 'ixon', 'ixany'], stdin=sys.stdout).wait()
@@ -240,11 +238,9 @@ class Ponymenu:
         Popen(command, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr).wait()
     
     
-    def interact(self, args):
+    def interact(self):
         '''
         Start menu interaction
-        
-        @param  args:list<str>  Arguments to pass to the executed command
         '''
         def clean(items):
             i = 0
@@ -416,7 +412,7 @@ class Ponymenu:
                             def __init__(self, command):
                                 self.command = command
                             def __call__(self):
-                                Ponymenu.execute(self.command + args)
+                                Ponymenu.execute(self.command)
                         return ExecFunctor(item.cmd)
                 else:
                     if len(stack) == 0:
@@ -620,55 +616,5 @@ class Parser:
 
 
 if __name__ == '__main__':
-    plus = False
-    for arg in sys.argv[1:]:
-        if arg in ('-v', '--version'):
-            print('ponymenu ' + VERSION)
-            
-        elif arg in ('-h', '--help'):
-            print('ponymenu – terminal based application menu')
-            print()
-            print('Run `info ponymenu` for usage information')
-            print()
-            print('-h,  --help        Print this table')
-            print('-v,  --version     Print the program name and version')
-            print('-c,  --copyright   Print copyright information')
-            print()
-            print()
-            
-        elif arg in ('-c', '--copyright'):
-            print('ponymenu – terminal based application menu')
-            print()
-            print('Copyright © 2012, 2013  Mattias Andrée (maandree@member.fsf.org)')
-            print()
-            print('This program is free software: you can redistribute it and/or modify')
-            print('it under the terms of the GNU General Public License as published by')
-            print('the Free Software Foundation, either version 3 of the License, or')
-            print('(at your option) any later version.')
-            print()
-            print('This program is distributed in the hope that it will be useful,')
-            print('but WITHOUT ANY WARRANTY; without even the implied warranty of')
-            print('MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the')
-            print('GNU General Public License for more details.')
-            print()
-            print('You should have received a copy of the GNU General Public License')
-            print('along with this program.  If not, see <http://www.gnu.org/licenses/>.')
-            print()
-            print()
-            
-        elif arg == '+':
-            plus = True
-            break
-        else:
-            printerr('ponymenu: unrecognised option: ' + arg)
-    
-    if plus:
-        plus = 2
-        for arg in sys.argv[1:]:
-            if arg == '+':
-                break
-            plus += 1
-        Ponymenu(sys.argv[plus:])
-    else:
-        Ponymenu([])
+    Ponymenu()
 
