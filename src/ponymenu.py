@@ -61,6 +61,12 @@ def printf(master, *slave):
     '''
     sys.stdout.buffer.write((master % slave).encode('utf-8'))
 
+def printerrf(master, *slave):
+    '''
+    Print a non-ended line to stderr with formating
+    '''
+    sys.stderr.buffer.write((master % slave).encode('utf-8'))
+
 def flush():
     '''
     Flush stdout
@@ -80,7 +86,7 @@ class Ponymenu:
         action = None
         try:
             if TERM_INIT:
-                print('\033[?1049h\033[?25l', end='')
+                printerr('\033[?1049h\033[?25l', end='')
             Popen(['stty', '-icanon', '-echo', '-isig', '-ixoff', '-ixon', '-ixany'], stdin=sys.stdout).wait()
             
             
@@ -127,25 +133,6 @@ class Ponymenu:
             self.linuxvt = ('TERM' in self.env) and (self.env['TERM'] == 'linux')
             
             
-            ## Change system enviroment variables with ponymenurc
-            for file in ('$XDG_CONFIG_HOME/ponymenu/ponymenurc',
-                         '$HOME/.config/ponymenu/ponymenurc',
-                         '$HOME/.ponymenurc',
-                         '/etc/ponymenurc'):
-                file = parsefile(file)
-                if (file is not None) and os.path.exists(file):
-                    with open(file, 'rb') as ponymenurc:
-                        code = ponymenurc.read().decode('utf8', 'replace') + '\n'
-                        code = compile(code, file, 'exec')
-                        exec(code)
-                    break
-            
-            
-            self.HOME = self.env['HOME'] if 'HOME' in self.env else '' # in case ~/.ponymenurc changes it
-            if len(self.HOME) == 0:
-                self.env['HOME'] = self.HOME = os.path.expanduser('~')
-            
-            
             menuFound = False
             self.root = Entry(None, None, None, None)
             
@@ -164,8 +151,8 @@ class Ponymenu:
             if not menuFound:
                 Popen(['stty', 'icanon', 'echo', 'isig', 'ixoff', 'ixon'], stdin=sys.stdout).wait()
                 if TERM_INIT:
-                    print('\033[?1049h', end='')
-                print('ponymenu: no menu file found')
+                    printerr('\033[?1049h', end='')
+                printerr('ponypass: no menu file found')
                 return
             
             action = self.interact()
@@ -173,7 +160,7 @@ class Ponymenu:
         finally:
             Popen(['stty', 'icanon', 'echo', 'isig', 'ixoff', 'ixon', 'ixany'], stdin=sys.stdout).wait()
             if TERM_INIT:
-                print('\033[1;1H\033[2J\033[?25h\033[?1049l', end='')
+                printerr('\033[1;1H\033[2J\033[?25h\033[?1049l', end='')
             if action is not None:
                 action()
     
@@ -248,13 +235,13 @@ class Ponymenu:
                     first = first[:self.termw - 6]
             elif len(first) + len(second) > self.termw - 6:
                 second = second[:self.termw - 6 - len(first) - 1] + '…'
-            printf('    %s \033[%sm%s\033[21m%s\033[m\n', '\033[1;34m>\033[m' if selected else ' ',
+            printerrf('    %s \033[%sm%s\033[21m%s\033[m\n', '\033[1;34m>\033[m' if selected else ' ',
                                                           ('1;37;44' if self.linuxvt else '97;44') if selected else '34',
                                                           first, second)
         
         searchString = ''
         def printSearch():
-            printf('\033[%i;1H\033[K%s\033[7;41;1m<\033[m', self.termh, searchString)
+            printerrf('\033[%i;1H\033[K%s\033[7;41;1m<\033[m', self.termh, searchString)
         
         def printAll(items, selectedIndex, maxlen, offset):
             index = 0
@@ -268,7 +255,7 @@ class Ponymenu:
                         printEntry(entry, selected, maxlen)
                 index += 1
             arrows = min(len(filldown), ending)
-            printf('      %s%s', filldown[:arrows], fill[arrows:])
+            printerrf('      %s%s', filldown[:arrows], fill[arrows:])
         
         def redraw(items, selectedIndex, maxlen, offset):
             termsize = (24, 80)
@@ -286,9 +273,9 @@ class Ponymenu:
             fill = ' ' * self.termw
             filldown = '↓' * (self.termw - 6)
             fillup = '↑' * (self.termw - 6)
-            printf('\033[m\033[1;1H\033[2J\033[7;1m%s\033[27;21m\033[%i;1H\033[7m%s\033[27m\n%s\033[4;1H', ' ponypass, press C-q to quit' + fill[28:], self.termh - 1, fill, '\033[7;41;1m<\033[m' + fill[1:])
+            printerrf('\033[m\033[1;1H\033[2J\033[7;1m%s\033[27;21m\033[%i;1H\033[7m%s\033[27m\n%s\033[4;1H', ' ponypass, press C-q to quit' + fill[28:], self.termh - 1, fill, '\033[7;41;1m<\033[m' + fill[1:])
             arrows = min(len(fillup), offset)
-            printf('      %s%s\033[5;1H', fillup[:arrows], fill[arrows:])
+            printerrf('      %s%s\033[5;1H', fillup[:arrows], fill[arrows:])
             
             printAll(items, selectedIndex, maxlen, offset)
             printSearch()
@@ -316,7 +303,7 @@ class Ponymenu:
                 redraw(items, selectedIndex, maxlen, offset)
             elif c.startswith('\033['):
                 if c == '\033[A':
-                    printf('\033[%i;1H', selectedIndex + 5 - offset)
+                    printerrf('\033[%i;1H', selectedIndex + 5 - offset)
                     printEntry(items[selectedIndex], False, maxlen)
                     selectedIndex = (count if selectedIndex == 0 else selectedIndex) - 1
                     oldOffset = offset
@@ -327,12 +314,12 @@ class Ponymenu:
                     while selectedIndex >= offset + self.termh - 8:
                         offset = count - self.termh + 9
                     if offset == oldOffset:
-                        printf('\033[%i;1H', selectedIndex + 5 - offset)
+                        printerrf('\033[%i;1H', selectedIndex + 5 - offset)
                         printEntry(items[selectedIndex], True, maxlen)
                     else:
                         redraw(items, selectedIndex, maxlen, offset)
                 elif c == '\033[B':
-                    printf('\033[%i;1H', selectedIndex + 5 - offset)
+                    printerrf('\033[%i;1H', selectedIndex + 5 - offset)
                     printEntry(items[selectedIndex], False, maxlen)
                     selectedIndex = (selectedIndex + 1) % count
                     if selectedIndex == 0:
@@ -343,7 +330,7 @@ class Ponymenu:
                         while selectedIndex >= offset + self.termh - 8:
                             offset += (self.termh - 8) >> 1
                         if offset == oldOffset:
-                            printf('\033[%i;1H', selectedIndex + 5 - offset)
+                            printerrf('\033[%i;1H', selectedIndex + 5 - offset)
                             printEntry(items[selectedIndex], True, maxlen)
                         else:
                             redraw(items, selectedIndex, maxlen, offset)
