@@ -132,8 +132,6 @@ class Ponymenu:
             
             self.env = os.environ
             self.linuxvt = ('TERM' in self.env) and (self.env['TERM'] == 'linux')
-            self.display = ('DISPLAY' in self.env) and self.env['DISPLAY'].startswith(':')
-            self.graphical = self.display and not self.linuxvt
             
             
             ## Change system enviroment variables with ponymenurc
@@ -207,19 +205,6 @@ class Ponymenu:
                             cmd = cmd[0]
                     elif tag[0] == 'inner':
                         inner = make(tag[1:])
-                    elif tag[0] == 'req':
-                        for req in tag[1:]:
-                            if not isinstance(req, list):
-                                req = [req]
-                            qual = True
-                            for r in req:
-                                if r == 'tty':
-                                    qual &= not self.graphical
-                                elif (r == 'x') or (r == 'graphical'):
-                                    qual &= self.graphical
-                            if add is None:
-                                add = False
-                            add |= qual
                 if add is None:
                     add = True
                 if add:
@@ -235,7 +220,7 @@ class Ponymenu:
         
         @param  command:list<str>  The command
         '''
-        Popen(command, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr).wait()
+        print(command)
     
     
     def interact(self):
