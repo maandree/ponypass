@@ -190,14 +190,10 @@ class Ponymenu:
                 (name, address, uuid, inner) = (None, None, None, None)
                 add = None
                 for tag in item:
-                    if   tag[0] == 'name':     name    = ' '.join(tag[1:])
-                    elif tag[0] == 'address':  address = ' '.join(tag[1:])
-                    elif tag[0] == 'uuid':
-                        uuid  = tag[1:]
-                        if (len(uuid) == 1) and isinstance(uuid[0], list):
-                            uuid = uuid[0]
-                    elif tag[0] == 'inner':
-                        inner = make(tag[1:])
+                    if   tag[0] == 'name':  name    = ' '.join(tag[1:])
+                    elif tag[0] == 'desc':  address = ' '.join(tag[1:])
+                    elif tag[0] == 'cmd':   uuid    = ' '.join(tag[1:])
+                    elif tag[0] == 'inner': inner   =     make(tag[1:])
                 if add is None:
                     add = True
                 if add:
@@ -211,9 +207,9 @@ class Ponymenu:
         '''
         Execute command
         
-        @param  command:list<str>  The command
+        @param  command:str  The command
         '''
-        print(command[2])
+        print(command)
     
     
     def interact(self):
