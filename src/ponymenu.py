@@ -194,21 +194,21 @@ class Ponymenu:
         def make(items):
             rc = []
             for item in items:
-                (name, desc, cmd, inner) = (None, None, None, None)
+                (name, address, uuid, inner) = (None, None, None, None)
                 add = None
                 for tag in item:
-                    if   tag[0] == 'name':  name = ' '.join(tag[1:])
-                    elif tag[0] == 'desc':  desc = ' '.join(tag[1:])
-                    elif tag[0] == 'cmd':
-                        cmd  = tag[1:]
-                        if (len(cmd) == 1) and isinstance(cmd[0], list):
-                            cmd = cmd[0]
+                    if   tag[0] == 'name':     name    = ' '.join(tag[1:])
+                    elif tag[0] == 'address':  address = ' '.join(tag[1:])
+                    elif tag[0] == 'uuid':
+                        uuid  = tag[1:]
+                        if (len(uuid) == 1) and isinstance(uuid[0], list):
+                            uuid = uuid[0]
                     elif tag[0] == 'inner':
                         inner = make(tag[1:])
                 if add is None:
                     add = True
                 if add:
-                    rc.append(Entry(name, desc, cmd, inner))
+                    rc.append(Entry(name, address, uuid, inner))
             return rc
         self.root.inner = make(Parser.parse(code))
     
@@ -231,7 +231,7 @@ class Ponymenu:
             i = 0
             while i < len(items):
                 item = items[i]
-                if item.cmd is None:
+                if item.uuid is None:
                     if (item.inner is None) or (len(item.inner) == 0):
                         items[i : i + 1] = []
                         continue
@@ -248,7 +248,7 @@ class Ponymenu:
         
         def printEntry(entry, selected, maxlen):
             first = entry.name + fill[UCS.dispLen(entry.name) : maxlen + 12]
-            second = entry.desc + fill[maxlen + 12 + 6 + UCS.dispLen(entry.desc):]
+            second = entry.address + fill[maxlen + 12 + 6 + UCS.dispLen(entry.address):]
             if len(first) >= self.termw - 6:
                 second = ''
                 if len(entry.name) > self.termw - 6:
@@ -398,7 +398,7 @@ class Ponymenu:
                                 self.command = command
                             def __call__(self):
                                 Ponymenu.execute(self.command)
-                        return ExecFunctor(item.cmd)
+                        return ExecFunctor(item.uuid)
                 else:
                     if len(stack) == 0:
                         continue
@@ -446,18 +446,18 @@ class Entry:
     '''
     Menu entry
     '''
-    def __init__(self, name, desc, cmd, inner):
+    def __init__(self, name, address, uuid, inner):
         '''
         Constructor
         
         @param  name:str?          The title of the entry
-        @param  desc:str?          The description of the entry
-        @param  cmd:list<str>?     The command executed when running the entry
+        @param  address:str?       The address of the entry
+        @param  uuid:list<str>?    The UUID of the entry
         @param  inner:list<Entry>  Inner entries
         '''
-        self.name = name if name is not None else '[untitled]'
-        self.desc = desc if desc is not None else ''
-        self.cmd = cmd
+        self.name    = name    if name    is not None else '[untitled]'
+        self.address = address if address is not None else ''
+        self.uuid = uuid
         self.inner = inner
     
     def __cmp__(self, other):
@@ -467,8 +467,8 @@ class Entry:
         @param   other  The right hand comparand
         @return         Less than zero if right hand is greater, more than zero if left hand is greater, otherwise 0
         '''
-        if (self.cmd is None) ^ (other.cmd is None):
-            return -1 if self.cmd is None else 1
+        if (self.uuid is None) ^ (other.uuid is None):
+            return -1 if self.uuid is None else 1
         return cmp(self.name, other.name)
 
 
