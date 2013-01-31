@@ -136,17 +136,13 @@ class Ponymenu:
             menuFound = False
             self.root = Entry(None, None, None, None)
             
-            for file in ('$XDG_CONFIG_HOME/ponymenu/ponymenu',
-                         '$HOME/.config/ponymenu/ponymenu',
-                         '$HOME/.ponymenu',
-                         '/etc/ponymenu'):
-                file = parsefile(file)
-                if (file is not None) and os.path.exists(file):
-                    with open(file, 'rb') as ponymenu:
-                        code = ponymenu.read().decode('utf8', 'replace')
-                        self.loadMenu(code)
-                        menuFound = True
-                    break
+            file = parsefile(sys.argv[1])
+            if (file is not None) and os.path.exists(file):
+                with open(file, 'rb') as ponymenu:
+                    code = ponymenu.read().decode('utf8', 'replace')
+                    self.loadMenu(code)
+                    menuFound = True
+                break
             
             if not menuFound:
                 Popen(['stty', 'icanon', 'echo', 'isig', 'ixoff', 'ixon'], stdin=sys.stdout).wait()
