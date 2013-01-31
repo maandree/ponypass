@@ -25,13 +25,6 @@ from subprocess import Popen, PIPE
 
 
 
-VERSION = 1.0
-'''
-This version ponymenu
-'''
-
-
-
 TERM_INIT = True
 '''
 Set to false if debugging
@@ -220,7 +213,7 @@ class Ponymenu:
         
         @param  command:list<str>  The command
         '''
-        print(command)
+        print(command[2])
     
     
     def interact(self):
@@ -295,7 +288,7 @@ class Ponymenu:
             fill = ' ' * self.termw
             filldown = '↓' * (self.termw - 6)
             fillup = '↑' * (self.termw - 6)
-            printf('\033[m\033[1;1H\033[2J\033[7;1m%s\033[27;21m\033[%i;1H\033[7m%s\033[27m\n%s\033[4;1H', ' ponymenu, press C-q to quit' + fill[28:], self.termh - 1, fill, '\033[7;41;1m<\033[m' + fill[1:])
+            printf('\033[m\033[1;1H\033[2J\033[7;1m%s\033[27;21m\033[%i;1H\033[7m%s\033[27m\n%s\033[4;1H', ' ponypass, press C-q to quit' + fill[28:], self.termh - 1, fill, '\033[7;41;1m<\033[m' + fill[1:])
             arrows = min(len(fillup), offset)
             printf('      %s%s\033[5;1H', fillup[:arrows], fill[arrows:])
             
