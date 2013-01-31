@@ -134,7 +134,7 @@ class Ponymenu:
             
             
             menuFound = False
-            self.root = Entry(None, None, None, None)
+            self.root = Entry(None, None, None, None, None, None)
             
             file = parsefile(sys.argv[1])
             if (file is not None) and os.path.exists(file):
@@ -142,12 +142,11 @@ class Ponymenu:
                     code = ponymenu.read().decode('utf8', 'replace')
                     self.loadMenu(code)
                     menuFound = True
-                break
             
             if not menuFound:
                 Popen(['stty', 'icanon', 'echo', 'isig', 'ixoff', 'ixon'], stdin=sys.stdout).wait()
                 if TERM_INIT:
-                    printerr('\033[?1049h', end='')
+                    printerr('\033[?1049l', end='')
                 printerr('ponypass: no menu file found')
                 return
             
@@ -156,7 +155,7 @@ class Ponymenu:
         finally:
             Popen(['stty', 'icanon', 'echo', 'isig', 'ixoff', 'ixon', 'ixany'], stdin=sys.stdout).wait()
             if TERM_INIT:
-                printerr('\033[1;1H\033[2J\033[?25h\033[?1049l', end='')
+                printerr('\033[?25h\033[?1049l', end='')
             if action is not None:
                 action()
     
@@ -182,7 +181,7 @@ class Ponymenu:
                 if add is None:
                     add = True
                 if add:
-                    rc.append(Entry(name, address, uuid, inner))
+                    rc.append(Entry(name, address, uuid, user, key, inner))
             return rc
         self.root.inner = make(Parser.parse(code))
     
@@ -215,6 +214,10 @@ class Ponymenu:
         stack = []
         allitems = clean(self.root.inner)
         items = allitems
+        if len(items) == 0:
+            printerr('\033[?1049l', end='')
+            printerr("\033[01;31mYou have no keys in your wallet.\033[00m");
+            return None
         maxlen = UCS.dispLen(max([entry.name for entry in items], key = UCS.dispLen))
         selectedIndex = 0
         count = len(items)
@@ -420,18 +423,22 @@ class Entry:
     '''
     Menu entry
     '''
-    def __init__(self, name, address, uuid, inner):
+    def __init__(self, name, address, uuid, user, key, inner):
         '''
         Constructor
         
         @param  name:str?          The title of the entry
         @param  address:str?       The address of the entry
-        @param  uuid:list<str>?    The UUID of the entry
+        @param  uuid:str           The UUID of the entry
+        @param  user:str           The username of the entry
+        @param  key:str            The password of the entry
         @param  inner:list<Entry>  Inner entries
         '''
         self.name    = name    if name    is not None else '[untitled]'
         self.address = address if address is not None else ''
         self.uuid = uuid
+        self.user = user
+        self.key = key
         self.inner = inner
     
     def __cmp__(self, other):

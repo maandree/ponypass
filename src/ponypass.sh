@@ -18,6 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+ponymenu="./ponymenu.py"
+
 tempmount="/dev/shm"
 id=$(cat "${HOME}/.ponypass/id")
 wallet="${HOME}/.ponypass/wallet"
@@ -57,6 +59,7 @@ touch "$temp" &&
     chmod 600 "$temp" &&
     echo -e '\e[01;34mLoading wallet.\e[00m' 1>&2 &&
     gpg --decrypt < "$wallet" > "$temp" &&
+    "$ponymenu" "$temp" &&
     echo -e '\e[01;34mSaving wallet.\e[00m' 1>&2 &&
     gpg --sign --local-user "$id" --encrypt --recipient "$id" < "$temp" > "${wallet}.new" &&
     mv -- "${wallet}.new" "$wallet"
