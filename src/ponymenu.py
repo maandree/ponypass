@@ -84,6 +84,9 @@ class Ponymenu:
         Constructor and mane
         '''
         action = None
+        
+        saved_tty = Popen(['stty', '--save'], stdin=PIPE, stderr=sys.stderr).communicate()[0].decode('utf-8', 'error')[:-1]
+        
         try:
             if TERM_INIT:
                 printerr('\033[?1049h\033[?25l', end='')
@@ -144,16 +147,13 @@ class Ponymenu:
                     menuFound = True
             
             if not menuFound:
-                Popen(['stty', 'icanon', 'echo', 'isig', 'ixoff', 'ixon'], stdin=sys.stdout).wait()
-                if TERM_INIT:
-                    printerr('\033[?1049l', end='')
                 printerr('ponypass: no menu file found')
                 return
-            
-            action = self.interact()
+            else:
+                action = self.interact()
             
         finally:
-            Popen(['stty', 'icanon', 'echo', 'isig', 'ixoff', 'ixon', 'ixany'], stdin=sys.stdout).wait()
+            Popen(['stty', saved_tty], stdin=sys.stdout).wait()
             if TERM_INIT:
                 printerr('\033[?25h\033[?1049l', end='')
             if action is not None:
