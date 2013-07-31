@@ -51,6 +51,7 @@ rc=1
 
 ln -s /dev/null "${tempmount}/.${tmpid}~"
 ln -s /dev/null "${tempmount}/.${tmpid}.bak"
+ln -s /dev/null "${tempmount}/.${tmpid}.swo"
 ln -s /dev/null "${tempmount}/.${tmpid}.swp"
 ln -s /dev/null "${tempmount}/#.${tmpid}#"
 ln -s /dev/null "${tempmount}/.#.${tmpid}"
