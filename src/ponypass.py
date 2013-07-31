@@ -91,13 +91,57 @@ email = None
 
 if len(sys.argv) == 1:
     pass ## TODO
-
+    
 elif sys.argv[1] == 'edit':
-    pass ## TODO
-
+    (entry, parent) = pass ## TODO
+    user = entry['user']
+    passphrase = entry['pass']
+    email = entry['email']
+    print('\033[01;34mUsername (current: %s):\033[00m  ' % user, end = '')
+    sys.stdout.flush()
+    _user = input()
+    if _user != '':
+        user = _user
+    print('\033[01;34mE-mail (current: %s):\033[00m  ' % email, end = '')
+    sys.stdout.flush()
+    email = input()
+    if _email != '':
+        email = _email
+    passwordmenu = [{'title' : 'Create random passphrase', 'description' : 'Using correctpony', 'value' : 0},
+                    {'title' : 'Create random obscure password', 'description' : 'Not typeable nor fully visible', 'value' : 1},
+                    {'title' : 'Enter passphrase manually', 'description' : 'Correctpony will give a suggestion', 'value' : 2}
+                    {'title' : 'Do not edit', 'description' : 'Keep the current passphrase', 'value' : -1}]
+    (passwordoption, _) = pass ## TODO
+    if passwordoption = 0:
+        passphrase = correctpony.gensimple()
+    elif passwordoption = 1:
+        passphrase = obscurepass.genobsure()
+    elif passwordoption = 2:
+        saved_tty = Popen(['stty', '--save'], stdout=PIPE, stderr=sys.stderr).communicate()[0].decode('utf-8', 'error')[:-1]
+        try:
+            Popen(['stty', '-echo'], stdin=sys.stdout).wait()
+            print('\033[01;34mSuggested passphrase:\033[00m %s' % correctpony.gensimple())
+            while True:
+                print('\033[01;34mPassphrase:\033[00m  ', end = '')
+                sys.stdout.flush()
+                passphrase = input()
+                print('\033[01;34mRetype passphrase:\033[00m  ', end = '')
+                sys.stdout.flush()
+                passphrase_re = input()
+                if passphrase_re == passphrase:
+                    break
+                print('\033[01;31mPassphrases did not match eachother!\033[00m')
+        finally:
+            Popen(['stty', saved_tty], stdin=sys.stdout).wait()
+    entry['user'] = user
+    entry['pass'] = passphrase
+    entry['email'] = email
+    parent.sort(key = lambda item : item['title'])
+    
 elif sys.argv[1] == 'delete':
-    pass ## TODO
-
+    (entry, parent) = pass ## TODO
+    parent.remove(entry)
+    
 elif sys.argv[1] == 'add':
     print('\033[01;34mSite:\033[00m  ', end = '')
     sys.stdout.flush()
@@ -111,7 +155,7 @@ elif sys.argv[1] == 'add':
     passwordmenu = [{'title' : 'Create random passphrase', 'description' : 'Using correctpony', 'value' : 0},
                     {'title' : 'Create random obscure password', 'description' : 'Not typeable nor fully visible', 'value' : 1},
                     {'title' : 'Enter passphrase manually', 'description' : 'Correctpony will give a suggestion', 'value' : 2}]
-    passwordoption = pass ## TODO
+    (passwordoption, _) = pass ## TODO
     if passwordoption = 0:
         passphrase = correctpony.gensimple()
     elif passwordoption = 1:
