@@ -139,11 +139,17 @@ elif sys.argv[1] == 'edit':
     entry['user'] = user
     entry['pass'] = passphrase
     entry['email'] = email
-    parent.sort(key = lambda item : item['title'])
+    (wallet if parent is None else parent['inner']).sort(key = lambda item : item['title'])
     
 elif sys.argv[1] == 'delete':
     (entry, parent) = pass ## TODO
-    parent.remove(entry)
+    (wallet if parent is None else parent['inner']).remove(entry)
+    if (parent is not None) and (len(parent['inner']) == 1):
+        entry = parent[0]
+        parent['user'] = entry['user']
+        parent['pass'] = entry['pass']
+        parent['email'] = entry['email']
+        del parent['inner']
     
 elif sys.argv[1] == 'add':
     print('\033[01;34mSite:\033[00m  ', end = '')
