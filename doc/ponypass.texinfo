@@ -41,7 +41,7 @@ Texts. A copy of the license is included in the section entitled
 @insertcopying
 @page
 @*@*
-@center{`Every site needs a unique secure password.'}
+@center `Every site needs a unique secure password.'
 @end titlepage
 
 @contents
