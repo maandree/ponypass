@@ -90,7 +90,10 @@ email = None
 
 
 if len(sys.argv) == 1:
-    pass ## TODO
+    (entry, _) = pass ## TODO
+    user = entry['user']
+    passphrase = entry['pass']
+    email = entry['email']
     
 elif sys.argv[1] == 'edit':
     (entry, parent) = pass ## TODO
