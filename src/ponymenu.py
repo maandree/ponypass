@@ -85,7 +85,7 @@ class Ponymenu:
         '''
         action = None
         
-        saved_tty = Popen(['stty', '--save'], stdin=PIPE, stderr=sys.stderr).communicate()[0].decode('utf-8', 'error')[:-1]
+        saved_tty = Popen(['stty', '--save'], stdout=PIPE, stderr=sys.stderr).communicate()[0].decode('utf-8', 'error')[:-1]
         
         try:
             if TERM_INIT:
