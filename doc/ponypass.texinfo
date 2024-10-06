@@ -35,7 +35,7 @@ Texts. A copy of the license is included in the section entitled
 @titlepage
 @title ponypass
 @subtitle Secure superultraawesomemasing passphrase wallet with passphrase generation and expiration notification
-@author Mattias Andrée, maandree@@member.fsf.org
+@author Mattias Andrée, m@@maandree.se
 @page
 @vskip 0pt plus 1filll
 @insertcopying
@@ -61,7 +61,7 @@ Texts. A copy of the license is included in the section entitled
 @flushleft
 ponypass – Secure superultraawesomemasing passphrase wallet with passphrase generation and expiration notification
 
-Copyright © 2013  Mattias Andrée (maandree@@member.fsf.org)
+Copyright © 2013  Mattias Andrée (m@@maandree.se)
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
